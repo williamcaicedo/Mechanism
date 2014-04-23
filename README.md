@@ -6,7 +6,7 @@ Particle Swarm Optimization, Clonal Selection Algorithm and OPT-aiNet.
 
 Example of use:
 
-```
+```java
 //PSO, 20 particles, 300 iterations, 2D problem
 SwarmOptimizer optimizer = new SwarmOptimizer(20, 2, max, min, 5,this.function);
 evolve(optimizer, 300);
