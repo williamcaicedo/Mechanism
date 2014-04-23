@@ -20,10 +20,7 @@ import co.mechanism.utils.Utils;
  */
 public class ClonalgOptimizer extends AbstractOptimizer<Lymphocyte> {
 
-	// List<Lymphocyte> limphocytes;
-	// List<List<Lymphocyte>> clones;
-
-	private int dimensions;
+	
 	private int numberOfCells;
 	private final double d;
 	private final double beta;
@@ -41,7 +38,6 @@ public class ClonalgOptimizer extends AbstractOptimizer<Lymphocyte> {
 		// Utils.getInstanceByReflection(functionClassName));
 		this.mutationProvider = mutationProvider;
 		this.positionProvider = positionProvider;
-		this.dimensions = dimensions;
 		this.numberOfCells = numberOfCells;
 		this.beta = beta;
 		this.d = d;
@@ -58,7 +54,6 @@ public class ClonalgOptimizer extends AbstractOptimizer<Lymphocyte> {
 		// Utils.getInstanceByReflection(functionClassName));
 		this.mutationProvider = mutationProvider;
 		this.positionProvider = positionProvider;
-		this.dimensions = dimensions;
 		this.numberOfCells = numberOfCells;
 		this.beta = beta;
 		this.d = d;
@@ -67,90 +62,43 @@ public class ClonalgOptimizer extends AbstractOptimizer<Lymphocyte> {
 	}
 
 	protected void init() {
-
-		// this. = new FastList<Lymphocyte>();
 		for (int i = 0; i < this.numberOfCells; i++) {
 			this.getPopulation().add(this.getRandomLymphocyte());
 		}
 	}
 
 	protected Lymphocyte getRandomLymphocyte() {
-		double v;
-//		List<Double> temp = new FastList<Double>();
-//		 for (int j = 0; j < this.dimensions; j++) {
-//		 v = this.getLowerBound().get(j) + (mt.nextDouble() *
-//		 ((this.getUpperBound().get(j) - this.getLowerBound().get(j))));
-//		 temp.add(v);
-//		 }
-//		for (int j = 0; j < this.dimensions; j++) {
-//			v = (this.mt.nextBoolean()) ? 1 : 0;
-//			temp.add(v);
-//		}
+		
+
 		return new Lymphocyte(this.positionProvider.getRandomPosition(this));
 	}
 
 	@Override
 	public void evolve() {
 		clonalSelect();
-		// System.out.println(this.limphocytes.get(0).getValue());
 		suppress();
 	}
 
 	protected void clonalSelect() {
 
-		// List<Double> fitness = new FastList<Double>(this.limphocytes.size());
 		for (Lymphocyte cell : this.getPopulation()) {
 			cell.evaluate(getCostFunction());
 		}
 		Collections.sort(this.getPopulation());
-		double max = this.getPopulation().get(this.getPopulation().size() - 1)
-				.getValue();
-
 		Lymphocyte cell = null;
 		Lymphocyte mutant = null;
 		Lymphocyte bestMutant = null;
-		// List<BCell> c = null;
 		long nc;
-		// int dim;
-		// double mp;
 		double highestFitness;
-		// List<Double> mutatedParameters = null;
-
 		for (int i = 0; i < this.getPopulation().size(); i++) {
 
 			highestFitness = Double.POSITIVE_INFINITY;
 			cell = this.getPopulation().get(i);
 			nc = Math.round(beta * this.getPopulation().size());
-			// c = new FastList<BCell>((int)nc);
 			for (int j = 0; j < nc; j++) {
-				// mutatedParameters = new
-				// FastList<Double>(cell.getPosition().size());
-				// dim = 0;
-				// for (Double p : cell.getPosition()) {
-				// //Mutation as defined for opt-aiNET
-				// double alpha = (1 / beta) * Math.exp(-cell.getValue() / max);
-				//
-				// //checking bounds
-				// // do {
-				// // mp = p + alpha * mt.nextGaussian();
-				// // System.out.println("ojo");
-				// // } while (mp < this.getLowerBound().get(dim) || mp >
-				// this.getUpperBound().get(dim));
-				// mp = p + alpha * mt.nextGaussian();
-				// if (mp < this.getLowerBound().get(dim)) {
-				// mp = this.getLowerBound().get(dim);
-				// } else if (mp > this.getUpperBound().get(dim)) {
-				// mp = this.getUpperBound().get(dim);
-				// }
-				//
-				// mutatedParameters.add(mp);
-				// dim++;
-				// }
-				// mutant = new Lymphocyte(mutatedParameters);
 				mutant = new Lymphocyte(Utils.doubleListDeepCopy(cell.getPosition()));
 				mutant.setValue(cell.getValue());
 				mutant = (Lymphocyte) this.mutationProvider.mutate(mutant, this);
-				// c.add(mutant);
 				if (mutant.evaluate(getCostFunction()) < highestFitness) {
 					highestFitness = mutant.getValue();
 					bestMutant = mutant;
@@ -160,7 +108,6 @@ public class ClonalgOptimizer extends AbstractOptimizer<Lymphocyte> {
 			if (bestMutant.getValue() < cell.getValue()) {
 				this.getPopulation().set(i, bestMutant);
 			}
-			// this.clones.add(c);
 		}
 
 	}
